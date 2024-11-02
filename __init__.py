@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from core.builtins import Bot, Image, Plain
 from core.component import module
@@ -57,19 +57,30 @@ def generate_msg(locale: Bot.MessageSession.locale, rank: int, cluster: dict):
 @mcim.command('status {{mcim.help.status}}')
 async def status(msg: Bot.MessageSession):
     dashboard = await get_url(f'{API}/stats/center', fmt='json')
-    cache = await get_url(f'https://mod.mcimirror.top/statistics', fmt='json')
+
     onlines = dashboard.get('onlines')
     hits = dashboard.get('today').get('hits')
     size = size_convert(dashboard.get('today').get('bytes'))
+    sources = dashboard.get('sources')
     totalFiles = dashboard.get('totalFiles')
     totalSize = size_convert(dashboard.get('totalSize'))
+    startTime = datetime.fromtimestamp(dashboard.get('startTime') / 1000)
+    runningTime = datetime.now() - startTime
+    runningDays = runningTime.days
+    runningHours, runningSeconds = divmod(runningTime.seconds, 3600)
+    runningMinutes, runningSeconds = divmod(runningSeconds, 60)
 
     msg_list = [msg.locale.t('mcim.message.status',
                              onlines=onlines,
                              hits=hits,
                              size=size,
+                             sources=sources,
                              totalFiles=totalFiles,
-                             totalSize=totalSize
+                             totalSize=totalSize,
+                             runningDays=runningDays,
+                             runningHours=runningHours,
+                             runningMinutes=runningMinutes,
+                             runningSeconds=runningSeconds
                              )]
 
     msg_list.append(
@@ -80,6 +91,8 @@ async def status(msg: Bot.MessageSession):
                 timezone=False)))
 
     await msg.send_message(msg_list)
+
+    cache = await get_url(f'https://mod.mcimirror.top/statistics', fmt='json')
 
     curseforge = cache['curseforge']
     modrinth = cache['modrinth']
