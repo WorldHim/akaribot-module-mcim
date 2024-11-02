@@ -10,7 +10,7 @@
     "mcim.message.status": "当前在线节点：${onlines} 个\n当日全网总请求：${hits} 次\n当日全网总流量：${size}\n总文件数：${totalFiles}\n总文件大小：${totalSize}",
     "mcim.message.cached.status": "截至 ${time}，MCIM 已缓存：\nCurseforge 模组 ${cf_mod} 个，文件 ${cf_file} 个，指纹 ${cf_fingerprint} 个\nModrinth 项目 ${mr_project} 个，版本 ${mr_version} 个，文件 ${mr_file} 个\nCDN 文件 ${cdn_file} 个",
     "mcim.message.cluster.status": "节点名：${clusterName}\n在线状态：${status}\n请求数：${hits} 次\n流量：${traffic}\n带宽：${bandwidth} Mbps",
-    "mcim.message.cluster.detail": "节点 id：${clusterId}\n节点类型：${fullsize}\n版本：${version}\n创建时间：${createdAt}\n上一次离线时间：${downTime}",
+    "mcim.message.cluster.detail": "节点 id：${clusterId}\n节点类型：${fullsize} | ${proxy}\n统计方式：${stat}\n版本：${version}\n创建时间：${createdAt}\n上一次离线时间：${downTime}",
     "mcim.message.owner": "拥有者: ${ownerName}",
     "mcim.message.sponsor": "赞助商: ${sponsor}\n赞助商网站: ${sponsorUrl}",
     "mcim.message.top": "${rank} | ${clusterName} | ${version}\n${hits} | ${traffic}\n拥有者：${ownerName}",
@@ -22,9 +22,17 @@
     "mcim.message.cluster.banned": "🟫",
     "mcim.message.cluster.full": "🌕",
     "mcim.message.cluster.frag": "🌙",
+    "mcim.message.cluster.proxy": "反代",
+    "mcim.message.cluster.nonproxy": "本地",
+    "mcim.message.cluster.masterstat": "主控统计",
+    "mcim.message.cluster.selfstat": "节点上报",
     "mcim.message.cluster.online.detail": "🟩 在线",
     "mcim.message.cluster.offline.detail": "🟥 离线",
     "mcim.message.cluster.banned.detail": "🟫 封禁",
     "mcim.message.cluster.full.detail": "🌕 全量",
-    "mcim.message.cluster.frag.detail": "🌙 分片"
+    "mcim.message.cluster.frag.detail": "🌙 分片",
+    "mcim.message.cluster.proxy.detail": "反代",
+    "mcim.message.cluster.nonproxy.detail": "本地",
+    "mcim.message.cluster.masterstat.detail": "主控统计",
+    "mcim.message.cluster.selfstat.detail": "节点上报"
 }

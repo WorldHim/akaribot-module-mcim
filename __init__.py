@@ -53,7 +53,6 @@ def generate_msg(locale: Bot.MessageSession.locale, rank: int, cluster: dict):
                                                 traffic=traffic,
                                                 ownerName=ownerName)}'
 
-
 @mcim.command()
 @mcim.command('status {{mcim.help.status}}')
 async def status(msg: Bot.MessageSession):
@@ -115,6 +114,8 @@ async def rank(msg: Bot.MessageSession, rank: int = 1):
 
     clusterId = cluster.get('clusterId')
     fullsize = msg.locale.t('mcim.message.cluster.full.detail') if cluster.get('fullsize') else msg.locale.t('mcim.message.cluster.frag.detail')
+    proxy = msg.locale.t('mcim.message.cluster.proxy.detail') if cluster.get('isProxy') else msg.locale.t('mcim.message.cluster.nonproxy.detail')
+    stat = msg.locale.t('mcim.message.cluster.masterstat')
     version = cluster.get('version')
     createdAt = msg.ts2strftime(cluster.get('createdAt'), timezone=False)
     downTime = msg.ts2strftime(cluster.get('downTime'), timezone=False)
@@ -136,6 +137,8 @@ async def rank(msg: Bot.MessageSession, rank: int = 1):
     msg_list = [msg.locale.t('mcim.message.cluster.detail',
                              clusterId=clusterId,
                              fullsize=fullsize,
+                             proxy=proxy,
+                             stat=stat,
                              version=version,
                              createdAt=createdAt,
                              downTime=downTime
@@ -192,6 +195,7 @@ async def top(msg: Bot.MessageSession, rank: int = 10):
 
     await msg.finish(msg_list)
 
+@mcim.command('[<keyword>] {{mcim.help.search}}')
 @mcim.command('search <keyword> {{mcim.help.search}}')
 async def search(msg: Bot.MessageSession, keyword: str):
     rank_list = await get_url(f'{API}/clusters', fmt='json')
