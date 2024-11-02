@@ -42,7 +42,7 @@ def generate_msg(locale: Bot.MessageSession.locale, rank: int, cluster: dict):
     clusterName = cluster.get('clusterName')
     version = cluster.get('version')
     hits = cluster.get('hits')
-    traffic = size_convert(cluster.get('traffic'))
+    bytes = size_convert(cluster.get('bytes'))
 
     ownerName = cluster.get('ownerName')
     return f'{status}{fullsize} | {locale.t('mcim.message.top',
@@ -50,7 +50,7 @@ def generate_msg(locale: Bot.MessageSession.locale, rank: int, cluster: dict):
                                                 clusterName=clusterName,
                                                 version=version,
                                                 hits=hits,
-                                                traffic=traffic,
+                                                bytes=bytes,
                                                 ownerName=ownerName)}'
 
 @mcim.command()
@@ -109,7 +109,7 @@ async def rank(msg: Bot.MessageSession, rank: int = 1):
     status = msg.locale.t('mcim.message.cluster.online.detail') if cluster.get('isOnline') else (msg.locale.t('mcim.message.cluster.banned.detail') if cluster.get('isBanned') else msg.locale.t('mcim.message.cluster.offline.detail'))
     clusterName = cluster.get('clusterName')
     hits = cluster.get('hits')
-    traffic = size_convert(cluster.get('traffic'))
+    bytes = size_convert(cluster.get('bytes'))
     bandwidth = cluster.get('bandwidth')
 
     clusterId = cluster.get('clusterId')
@@ -128,7 +128,7 @@ async def rank(msg: Bot.MessageSession, rank: int = 1):
                              clusterName=clusterName,
                              status=status,
                              hits=hits,
-                             traffic=traffic,
+                             bytes=bytes,
                              bandwidth=bandwidth
                              )]
 
