@@ -15,7 +15,7 @@
     "mcim.message.sponsor": "赞助商: ${sponsor}\n赞助商网站: ${sponsorUrl}",
     "mcim.message.top": "${rank} | ${clusterName} | ${version}\n${hits} | ${traffic}\n拥有者：${ownerName}",
     "mcim.message.source": "同步源：${name}\n文件数量：${count}\n同步时间：${lastUpdated}\n插件同步：${isFromPlugin}",
-    "mcim.message.result.empty": "当前没有节点在线",
+    "mcim.message.result.empty": "当前没有符合条件的节点在线",
     "mcim.message.query_time": "请求时间：${queryTime}",
     "mcim.message.cluster.online": "🟩",
     "mcim.message.cluster.offline": "🟥",
