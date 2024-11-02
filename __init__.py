@@ -5,7 +5,7 @@ from core.builtins import Bot, Image, Plain
 from core.component import module
 from core.utils.http import get_url
 
-API = 'https://files.mcimirror.top/93AtHome'
+API = 'https://files.mcimirror.top/api'
 DEFAULT_KEY = ['clusterName', 'ownerName', 'sponsor']
 
 mcimstatus = module(
@@ -58,7 +58,7 @@ def generate_msg(locale: Bot.MessageSession.locale, rank: int, cluster: dict):
 @mcimstatus.command()
 @mcimstatus.command('status {{mcimstatus.help.status}}')
 async def status(msg: Bot.MessageSession):
-    dashboard = await get_url(f'{API}/centerStatistics', fmt='json')
+    dashboard = await get_url(f'{API}/stats/center', fmt='json')
     cache = await get_url(f'https://mod.mcimirror.top/statistics', fmt='json')
     onlines = dashboard.get('onlines')
     hits = dashboard.get('today').get('hits')
@@ -102,7 +102,7 @@ async def status(msg: Bot.MessageSession):
 
 @mcimstatus.command('rank [<rank>] {{mcimstatus.help.rank}}')
 async def rank(msg: Bot.MessageSession, rank: int = 1):
-    rank_list = await get_url(f'{API}/rank', fmt='json')
+    rank_list = await get_url(f'{API}/clusters', fmt='json')
     if rank < 1 or rank > len(rank_list):
         await msg.finish(msg.locale.t('mcimstatus.message.cluster.invalid'))
 
@@ -148,7 +148,7 @@ async def rank(msg: Bot.MessageSession, rank: int = 1):
 
 @mcimstatus.command('online {{mcimstatus.help.online}}')
 async def online(msg: Bot.MessageSession):
-    rank_list = await get_url(f'{API}/rank', fmt='json')
+    rank_list = await get_url(f'{API}/clusters', fmt='json')
 
     msg_list = []
     for (rank, cluster) in enumerate(rank_list, start=1):
@@ -163,7 +163,7 @@ async def online(msg: Bot.MessageSession):
 
 @mcimstatus.command('banned {{mcimstatus.help.banned}}')
 async def banned(msg: Bot.MessageSession):
-    rank_list = await get_url(f'{API}/rank', fmt='json')
+    rank_list = await get_url(f'{API}/clusters', fmt='json')
 
     msg_list = []
     for (rank, cluster) in enumerate(rank_list, start=1):
@@ -178,7 +178,7 @@ async def banned(msg: Bot.MessageSession):
 
 @mcimstatus.command('top [<rank>] {{mcimstatus.help.top}}')
 async def top(msg: Bot.MessageSession, rank: int = 10):
-    rank_list = await get_url(f'{API}/rank', fmt='json')
+    rank_list = await get_url(f'{API}/clusters', fmt='json')
 
     if rank < 1 or rank > len(rank_list):
         await msg.finish(msg.locale.t('mcimstatus.message.cluster.invalid'))
@@ -195,7 +195,7 @@ async def top(msg: Bot.MessageSession, rank: int = 10):
 
 @mcimstatus.command('search <keyword> {{mcimstatus.help.search}}')
 async def search(msg: Bot.MessageSession, keyword: str):
-    rank_list = await get_url(f'{API}/rank', fmt='json')
+    rank_list = await get_url(f'{API}/clusters', fmt='json')
     msg_list = []
     cluster_list = search_cluster(rank_list, DEFAULT_KEY, keyword)
     for (rank, cluster) in cluster_list:
