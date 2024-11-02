@@ -205,4 +205,21 @@ async def search(msg: Bot.MessageSession, keyword: str):
     else:
         await msg.finish(msg.locale.t('mcim.message.result.empty'))
 
-# @mcim.command('source {{mcim.help.source}}')
+@mcim.command('source {{mcim.help.source}}')
+async def source(msg: Bot.MessageSession):
+    source_list = await get_url(f'{API}/stats/source', fmt='json')
+    msg_list = []
+
+    for source in source_list:
+        name = source.get('name')
+        count = source.get('count')
+        lastUpdated = source.get('lastUpdated')
+        isFromPlugin = msg.locale.t('yes') if source.get('isFromPlugin') else msg.locale.t('no')
+        msg_list.append(msg.locale.t('mcim.message.source',
+                                     name=name,
+                                     count=count,
+                                     lastUpdated=lastUpdated,
+                                     isFromPlugin=isFromPlugin
+                                     ))
+
+    await msg.finish(msg_list)
