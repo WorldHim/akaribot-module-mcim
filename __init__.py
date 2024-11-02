@@ -8,10 +8,9 @@ from core.utils.http import get_url
 API = 'https://files.mcimirror.top/api'
 DEFAULT_KEY = ['clusterName', 'ownerName', 'sponsor']
 
-mcimstatus = module(
-    bind_prefix='mcimstatus',
-    desc='{mcimstatus.help.desc}',
-    alias='mcim',
+mcim = module(
+    bind_prefix='mcim',
+    desc='{mcim.help.desc}',
     developers=['WorldHim'],
     support_languages=['zh_cn'],
 )
@@ -37,8 +36,8 @@ def search_cluster(cluster_list: dict, key_list: list, value: str):
     return result
 
 def generate_msg(locale: Bot.MessageSession.locale, rank: int, cluster: dict):
-    status = locale.t('mcimstatus.message.cluster.online') if cluster.get('isOnline') else (locale.t('mcimstatus.message.cluster.banned') if cluster.get('isBanned') else locale.t('mcimstatus.message.cluster.offline'))
-    fullsize = locale.t('mcimstatus.message.cluster.full') if cluster.get('fullsize') else locale.t('mcimstatus.message.cluster.frag')
+    status = locale.t('mcim.message.cluster.online') if cluster.get('isOnline') else (locale.t('mcim.message.cluster.banned') if cluster.get('isBanned') else locale.t('mcim.message.cluster.offline'))
+    fullsize = locale.t('mcim.message.cluster.full') if cluster.get('fullsize') else locale.t('mcim.message.cluster.frag')
 
     clusterName = cluster.get('clusterName')
     version = cluster.get('version')
@@ -46,7 +45,7 @@ def generate_msg(locale: Bot.MessageSession.locale, rank: int, cluster: dict):
     traffic = size_convert(cluster.get('traffic'))
 
     ownerName = cluster.get('ownerName')
-    return f'{status}{fullsize} | {locale.t('mcimstatus.message.top',
+    return f'{status}{fullsize} | {locale.t('mcim.message.top',
                                                 rank=rank,
                                                 clusterName=clusterName,
                                                 version=version,
@@ -55,8 +54,8 @@ def generate_msg(locale: Bot.MessageSession.locale, rank: int, cluster: dict):
                                                 ownerName=ownerName)}'
 
 
-@mcimstatus.command()
-@mcimstatus.command('status {{mcimstatus.help.status}}')
+@mcim.command()
+@mcim.command('status {{mcim.help.status}}')
 async def status(msg: Bot.MessageSession):
     dashboard = await get_url(f'{API}/stats/center', fmt='json')
     cache = await get_url(f'https://mod.mcimirror.top/statistics', fmt='json')
@@ -66,7 +65,7 @@ async def status(msg: Bot.MessageSession):
     totalFiles = dashboard.get('totalFiles')
     totalSize = size_convert(dashboard.get('totalSize'))
 
-    msg_list = [msg.locale.t('mcimstatus.message.status',
+    msg_list = [msg.locale.t('mcim.message.status',
                              onlines=onlines,
                              hits=hits,
                              size=size,
@@ -76,7 +75,7 @@ async def status(msg: Bot.MessageSession):
 
     msg_list.append(
         msg.locale.t(
-            'mcimstatus.message.query_time',
+            'mcim.message.query_time',
             queryTime = msg.ts2strftime(
                 datetime.now().timestamp(),
                 timezone=False)))
@@ -87,7 +86,7 @@ async def status(msg: Bot.MessageSession):
     modrinth = cache['modrinth']
     cdn = cache['file_cdn']
 
-    msg_list = [msg.locale.t('mcimstatus.message.cached.status',
+    msg_list = [msg.locale.t('mcim.message.cached.status',
                              time=msg.ts2strftime(datetime.now().timestamp(),timezone=False),
                              cf_mod=curseforge['mod'],
                              cf_file=curseforge['file'],
@@ -100,22 +99,22 @@ async def status(msg: Bot.MessageSession):
 
     await msg.finish(msg_list)
 
-@mcimstatus.command('rank [<rank>] {{mcimstatus.help.rank}}')
+@mcim.command('rank [<rank>] {{mcim.help.rank}}')
 async def rank(msg: Bot.MessageSession, rank: int = 1):
     rank_list = await get_url(f'{API}/clusters', fmt='json')
     if rank < 1 or rank > len(rank_list):
-        await msg.finish(msg.locale.t('mcimstatus.message.cluster.invalid'))
+        await msg.finish(msg.locale.t('mcim.message.cluster.invalid'))
 
     cluster = rank_list[rank - 1]
 
-    status = msg.locale.t('mcimstatus.message.cluster.online.detail') if cluster.get('isOnline') else (msg.locale.t('mcimstatus.message.cluster.banned.detail') if cluster.get('isBanned') else msg.locale.t('mcimstatus.message.cluster.offline.detail'))
+    status = msg.locale.t('mcim.message.cluster.online.detail') if cluster.get('isOnline') else (msg.locale.t('mcim.message.cluster.banned.detail') if cluster.get('isBanned') else msg.locale.t('mcim.message.cluster.offline.detail'))
     clusterName = cluster.get('clusterName')
     hits = cluster.get('hits')
     traffic = size_convert(cluster.get('traffic'))
     bandwidth = cluster.get('bandwidth')
 
     clusterId = cluster.get('clusterId')
-    fullsize = msg.locale.t('mcimstatus.message.cluster.full.detail') if cluster.get('fullsize') else msg.locale.t('mcimstatus.message.cluster.frag.detail')
+    fullsize = msg.locale.t('mcim.message.cluster.full.detail') if cluster.get('fullsize') else msg.locale.t('mcim.message.cluster.frag.detail')
     version = cluster.get('version')
     createdAt = msg.ts2strftime(cluster.get('createdAt'), timezone=False)
     downTime = msg.ts2strftime(cluster.get('downTime'), timezone=False)
@@ -124,7 +123,7 @@ async def rank(msg: Bot.MessageSession, rank: int = 1):
     sponsor = cluster.get('sponsor')
     sponsorUrl = cluster.get('sponsorUrl')
 
-    msg_list = [msg.locale.t('mcimstatus.message.cluster.status',
+    msg_list = [msg.locale.t('mcim.message.cluster.status',
                              clusterName=clusterName,
                              status=status,
                              hits=hits,
@@ -134,19 +133,19 @@ async def rank(msg: Bot.MessageSession, rank: int = 1):
 
     await msg.send_message(msg_list)
 
-    msg_list = [msg.locale.t('mcimstatus.message.cluster.detail',
+    msg_list = [msg.locale.t('mcim.message.cluster.detail',
                              clusterId=clusterId,
                              fullsize=fullsize,
                              version=version,
                              createdAt=createdAt,
                              downTime=downTime
                              ),
-                msg.locale.t('mcimstatus.message.owner', ownerName=ownerName),
-                msg.locale.t('mcimstatus.message.sponsor', sponsor=sponsor, sponsorUrl=sponsorUrl)]
+                msg.locale.t('mcim.message.owner', ownerName=ownerName),
+                msg.locale.t('mcim.message.sponsor', sponsor=sponsor, sponsorUrl=sponsorUrl)]
 
     await msg.finish(msg_list)
 
-@mcimstatus.command('online {{mcimstatus.help.online}}')
+@mcim.command('online {{mcim.help.online}}')
 async def online(msg: Bot.MessageSession):
     rank_list = await get_url(f'{API}/clusters', fmt='json')
 
@@ -159,9 +158,9 @@ async def online(msg: Bot.MessageSession):
     if msg_list:
         await msg.finish(msg_list)
     else:
-        await msg.finish(msg.locale.t('mcimstatus.message.result.empty'))
+        await msg.finish(msg.locale.t('mcim.message.result.empty'))
 
-@mcimstatus.command('banned {{mcimstatus.help.banned}}')
+@mcim.command('banned {{mcim.help.banned}}')
 async def banned(msg: Bot.MessageSession):
     rank_list = await get_url(f'{API}/clusters', fmt='json')
 
@@ -173,15 +172,15 @@ async def banned(msg: Bot.MessageSession):
     if msg_list:
         await msg.finish(msg_list)
     else:
-        await msg.finish(msg.locale.t('mcimstatus.message.result.empty'))
+        await msg.finish(msg.locale.t('mcim.message.result.empty'))
 
 
-@mcimstatus.command('top [<rank>] {{mcimstatus.help.top}}')
+@mcim.command('top [<rank>] {{mcim.help.top}}')
 async def top(msg: Bot.MessageSession, rank: int = 10):
     rank_list = await get_url(f'{API}/clusters', fmt='json')
 
     if rank < 1 or rank > len(rank_list):
-        await msg.finish(msg.locale.t('mcimstatus.message.cluster.invalid'))
+        await msg.finish(msg.locale.t('mcim.message.cluster.invalid'))
 
     msg_list = []
 
@@ -193,7 +192,7 @@ async def top(msg: Bot.MessageSession, rank: int = 10):
 
     await msg.finish(msg_list)
 
-@mcimstatus.command('search <keyword> {{mcimstatus.help.search}}')
+@mcim.command('search <keyword> {{mcim.help.search}}')
 async def search(msg: Bot.MessageSession, keyword: str):
     rank_list = await get_url(f'{API}/clusters', fmt='json')
     msg_list = []
@@ -204,4 +203,6 @@ async def search(msg: Bot.MessageSession, keyword: str):
     if msg_list:
         await msg.finish(msg_list)
     else:
-        await msg.finish(msg.locale.t('mcimstatus.message.result.empty'))
+        await msg.finish(msg.locale.t('mcim.message.result.empty'))
+
+# @mcim.command('source {{mcim.help.source}}')
