@@ -130,8 +130,8 @@ async def rank(msg: Bot.MessageSession, rank: int = 1):
     proxy = msg.locale.t('mcim.message.cluster.proxy.detail') if cluster.get('isProxy') else msg.locale.t('mcim.message.cluster.nonproxy.detail')
     stat = msg.locale.t('mcim.message.cluster.masterstat')
     version = cluster.get('version')
-    createdAt = msg.ts2strftime(cluster.get('createdAt'), timezone=False)
-    downTime = msg.ts2strftime(cluster.get('downTime'), timezone=False)
+    createdAt = msg.ts2strftime(cluster.get('createdAt')/1000, timezone=False)
+    downTime = msg.ts2strftime(cluster.get('downTime')/1000, timezone=False)
 
     ownerName = cluster.get('ownerName')
     sponsor = cluster.get('sponsor')
