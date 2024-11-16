@@ -67,11 +67,7 @@ def generate_msg(rank: str, cluster: dict, locale: Bot.MessageSession.locale = L
                                                 bytes=bytes,
                                                 ownerName=ownerName)}'
 
-@mcim.command()
-@mcim.command('status {{mcim.help.status}}')
-async def status(msg: Bot.MessageSession):
-    dashboard = await get_url(f'{API}/stats/center', fmt='json')
-
+def generate_dashboard_status(dashboard: dict, locale: Bot.MessageSession.locale = Locale('zh_cn')):
     onlines = dashboard.get('onlines')
     hits = dashboard.get('today').get('hits')
     size = size_convert(dashboard.get('today').get('bytes'))
@@ -84,18 +80,44 @@ async def status(msg: Bot.MessageSession):
     runningHours, runningSeconds = divmod(runningTime.seconds, 3600)
     runningMinutes, runningSeconds = divmod(runningSeconds, 60)
 
-    msg_list = [msg.locale.t('mcim.message.status',
-                             onlines=onlines,
-                             hits=hits,
-                             size=size,
-                             sources=sources,
-                             totalFiles=totalFiles,
-                             totalSize=totalSize,
-                             runningDays=runningDays,
-                             runningHours=runningHours,
-                             runningMinutes=runningMinutes,
-                             runningSeconds=runningSeconds
-                             )]
+    message = locale.t('mcim.message.status',
+                       onlines=onlines,
+                       hits=hits,
+                       size=size,
+                       sources=sources,
+                       totalFiles=totalFiles,
+                       totalSize=totalSize,
+                       runningDays=runningDays,
+                       runningHours=runningHours,
+                       runningMinutes=runningMinutes,
+                       runningSeconds=runningSeconds
+                       )
+
+    return message
+
+def generate_cache_status(cache: dict, locale: Bot.MessageSession.locale = Locale('zh_cn')):
+    curseforge = cache['curseforge']
+    modrinth = cache['modrinth']
+    cdn = cache['file_cdn']
+
+    message = locale.t('mcim.message.cached.status',
+                       cf_mod=curseforge['mod'],
+                       cf_file=curseforge['file'],
+                       cf_fingerprint=curseforge['fingerprint'],
+                       mr_project=modrinth['project'],
+                       mr_version=modrinth['version'],
+                       mr_file=modrinth['file'],
+                       cdn_file=cdn['file']
+                       )
+
+    return message
+
+@mcim.command()
+@mcim.command('status {{mcim.help.status}}')
+async def status(msg: Bot.MessageSession):
+    dashboard = await get_url(f'{API}/stats/center', fmt='json')
+
+    msg_list = [generate_dashboard_status(dashboard, msg.locale)]
 
     msg_list.append(
         msg.locale.t(
@@ -108,20 +130,7 @@ async def status(msg: Bot.MessageSession):
 
     cache = await get_url(f'https://mod.mcimirror.top/statistics', fmt='json')
 
-    curseforge = cache['curseforge']
-    modrinth = cache['modrinth']
-    cdn = cache['file_cdn']
-
-    msg_list = [msg.locale.t('mcim.message.cached.status',
-                             time=msg.ts2strftime(datetime.now().timestamp(),timezone=False),
-                             cf_mod=curseforge['mod'],
-                             cf_file=curseforge['file'],
-                             cf_fingerprint=curseforge['fingerprint'],
-                             mr_project=modrinth['project'],
-                             mr_version=modrinth['version'],
-                             mr_file=modrinth['file'],
-                             cdn_file=cdn['file']
-                             )]
+    msg_list = [generate_cache_status(cache)]
 
     await msg.finish(msg_list)
 
@@ -264,12 +273,13 @@ mcim_rss = module(
 )
 
 @mcim_rss.schedule(trigger=CronTrigger.from_crontab('5 0 * * *'))
-async def _():
-    Logger.info('获取昨日排名...')
+async def notify():
+    Logger.info('获取昨日统计信息...')
+
+    msg_list = []
 
     yesterday = await get_url(f'{API}/stats/yesterday', fmt='json')
     yesterday_rank_list = yesterday.get('rank')
-    msg_list = []
 
     for cluster in yesterday_rank_list:
         msg_list.append(generate_msg(cluster.get('rank'), cluster, show_status=False))
