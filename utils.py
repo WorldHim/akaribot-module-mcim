@@ -100,7 +100,7 @@ def generate_cache(cache: dict, locale: Bot.MessageSession.locale = Locale('zh_c
 def generate_cluster(cluster: dict, locale: Bot.MessageSession.locale = Locale('zh_cn')):
     message = []
 
-    status = locale.t('mcim.message.cluster.online.detail') if cluster.get('isOnline') else (msg.locale.t('mcim.message.cluster.banned.detail') if cluster.get('isBanned') else msg.locale.t('mcim.message.cluster.offline.detail'))
+    status = locale.t('mcim.message.cluster.online.detail') if cluster.get('isOnline') else (locale.t('mcim.message.cluster.banned.detail') if cluster.get('isBanned') else locale.t('mcim.message.cluster.offline.detail'))
     clusterName = cluster.get('clusterName')
     hits = cluster.get('hits')
     bytes = size_convert(cluster.get('bytes'))
@@ -115,8 +115,8 @@ def generate_cluster(cluster: dict, locale: Bot.MessageSession.locale = Locale('
                             )])
 
     clusterId = cluster.get('clusterId')
-    fullsize = locale.t('mcim.message.cluster.full.detail') if cluster.get('fullsize') else msg.locale.t('mcim.message.cluster.frag.detail')
-    proxy = locale.t('mcim.message.cluster.proxy.detail') if cluster.get('isProxy') else msg.locale.t('mcim.message.cluster.nonproxy.detail')
+    fullsize = locale.t('mcim.message.cluster.full.detail') if cluster.get('fullsize') else locale.t('mcim.message.cluster.frag.detail')
+    proxy = locale.t('mcim.message.cluster.proxy.detail') if cluster.get('isProxy') else locale.t('mcim.message.cluster.nonproxy.detail')
     stat = locale.t('mcim.message.cluster.masterstat')
     version = cluster.get('version')
     createdAt = Bot.ts2strftime(cluster.get('createdAt')/1000, timezone=False)
@@ -145,7 +145,7 @@ def generate_source(source: dict, locale: Bot.MessageSession.locale = Locale('zh
     name = source.get('name')
     count = source.get('count')
     lastUpdated = source.get('lastUpdated')
-    isFromPlugin = locale.t('yes') if source.get('isFromPlugin') else msg.locale.t('no')
+    isFromPlugin = locale.t('yes') if source.get('isFromPlugin') else locale.t('no')
     return locale.t('mcim.message.source',
                     name=name,
                     count=count,
