@@ -4,6 +4,9 @@ from datetime import datetime, timedelta
 from core.builtins import Bot, Image, Plain
 from core.component import module
 from core.utils.http import get_url
+from core.scheduler import CronTrigger
+from core.logger import Logger
+from core.utils.i18n import Locale
 
 API = 'https://files.mcimirror.top/api'
 DEFAULT_KEY = ['clusterName', 'ownerName', 'sponsor']
@@ -35,7 +38,7 @@ def search_cluster(cluster_list: dict, key_list: list, value: str):
 
     return result
 
-def generate_msg(locale: Bot.MessageSession.locale, rank: int, cluster: dict):
+def generate_msg(rank: str, cluster: dict, locale: Bot.MessageSession.locale = Locale('zh_cn'), show_status: bool = True):
     status = locale.t('mcim.message.cluster.online') if cluster.get('isOnline') else (locale.t('mcim.message.cluster.banned') if cluster.get('isBanned') else locale.t('mcim.message.cluster.offline'))
     fullsize = locale.t('mcim.message.cluster.full') if cluster.get('fullsize') else locale.t('mcim.message.cluster.frag')
 
@@ -45,7 +48,17 @@ def generate_msg(locale: Bot.MessageSession.locale, rank: int, cluster: dict):
     bytes = size_convert(cluster.get('bytes'))
 
     ownerName = cluster.get('ownerName')
-    return f'{status}{fullsize} | {locale.t('mcim.message.top',
+
+    match rank:
+        case "1":
+            rank = locale.t('mcim.message.cluster.gold')
+        case "2":
+            rank = locale.t('mcim.message.cluster.silver')
+        case "3":
+            rank = locale.t('mcim.message.cluster.bronze')
+
+    message = f'{status}{fullsize} | ' if show_status else ''
+    return f'{message}{locale.t('mcim.message.top',
                                                 rank=rank,
                                                 clusterName=clusterName,
                                                 version=version,
@@ -169,7 +182,7 @@ async def online(msg: Bot.MessageSession):
     for (rank, cluster) in enumerate(rank_list, start=1):
         if not cluster.get('isOnline'):
             break
-        msg_list.append(generate_msg(msg.locale, rank, cluster))
+        msg_list.append(generate_msg(rank, cluster, msg.locale))
 
     if msg_list:
         await msg.finish(msg_list)
@@ -183,7 +196,7 @@ async def banned(msg: Bot.MessageSession):
     msg_list = []
     for (rank, cluster) in enumerate(rank_list, start=1):
         if cluster.get('isBanned'):
-            msg_list.append(generate_msg(msg.locale, rank, cluster))
+            msg_list.append(generate_msg(rank, cluster, msg.locale))
 
     if msg_list:
         await msg.finish(msg_list)
@@ -202,7 +215,7 @@ async def top(msg: Bot.MessageSession, rank: int = 10):
 
     for i in range(0, rank):
         try:
-            msg_list.append(generate_msg(msg.locale, i+1, rank_list[i]))
+            msg_list.append(generate_msg(i+1, rank_list[i], msg.locale))
         except Exception:
             break
 
@@ -215,7 +228,7 @@ async def search(msg: Bot.MessageSession, keyword: str):
     msg_list = []
     cluster_list = search_cluster(rank_list, DEFAULT_KEY, keyword)
     for (rank, cluster) in cluster_list:
-        msg_list.append(generate_msg(msg.locale, rank, cluster))
+        msg_list.append(generate_msg(rank, cluster, msg.locale))
     
     if msg_list:
         await msg.finish(msg_list)
@@ -240,3 +253,23 @@ async def source(msg: Bot.MessageSession):
                                      ))
 
     await msg.finish(msg_list)
+
+mcim_rss = module(
+    bind_prefix='mcim_rss',
+    desc='{mcim_rss.help.desc}',
+    developers=['WorldHim'],
+    support_languages=['zh_cn'],
+)
+
+@mcim_rss.schedule(trigger=CronTrigger.from_crontab('5 0 * * *'))
+async def _():
+    Logger.info('获取昨日排名...')
+
+    yesterday = await get_url(f'{API}/stats/yesterday', fmt='json')
+    yesterday_rank_list = yesterday.get('rank')
+    msg_list = []
+
+    for cluster in yesterday_rank_list:
+        msg_list.append(generate_msg(cluster.get('rank'), cluster, show_status=False))
+
+    await Bot.FetchTarget.post_message('mcim_rss', msg_list)

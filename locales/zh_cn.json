@@ -34,5 +34,10 @@
     "mcim.message.cluster.proxy.detail": "反代",
     "mcim.message.cluster.nonproxy.detail": "本地",
     "mcim.message.cluster.masterstat.detail": "主控统计",
-    "mcim.message.cluster.selfstat.detail": "节点上报"
+    "mcim.message.cluster.selfstat.detail": "节点上报",
+    "mcim.message.cluster.gold": "🥇",
+    "mcim.message.cluster.silver": "🥈",
+    "mcim.message.cluster.bronze": "🥉",
+
+    "mcim_rss.help.desc":"推送 MCIMirror 相关数据。"
 }
