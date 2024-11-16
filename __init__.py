@@ -15,7 +15,8 @@ mcim = module(
     bind_prefix='mcim',
     desc='{mcim.help.desc}',
     developers=['WorldHim'],
-    support_languages=['zh_cn'],
+    recommend_modules=['mcim_rss'],
+    support_languages=['zh_cn']
 )
 
 def size_convert(value):
@@ -258,7 +259,8 @@ mcim_rss = module(
     bind_prefix='mcim_rss',
     desc='{mcim_rss.help.desc}',
     developers=['WorldHim'],
-    support_languages=['zh_cn'],
+    recommend_modules=['mcim'],
+    support_languages=['zh_cn']
 )
 
 @mcim_rss.schedule(trigger=CronTrigger.from_crontab('5 0 * * *'))
