@@ -39,7 +39,7 @@ def search_cluster(cluster_list: dict, key_list: list, value: str):
 
     return result
 
-def generate_msg(rank: str, cluster: dict, locale: Bot.MessageSession.locale = Locale('zh_cn'), show_status: bool = True):
+def generate_msg(raw_rank: int, cluster: dict, locale: Bot.MessageSession.locale = Locale('zh_cn'), show_status: bool = True):
     status = locale.t('mcim.message.cluster.online') if cluster.get('isOnline') else (locale.t('mcim.message.cluster.banned') if cluster.get('isBanned') else locale.t('mcim.message.cluster.offline'))
     fullsize = locale.t('mcim.message.cluster.full') if cluster.get('fullsize') else locale.t('mcim.message.cluster.frag')
 
@@ -50,13 +50,16 @@ def generate_msg(rank: str, cluster: dict, locale: Bot.MessageSession.locale = L
 
     ownerName = cluster.get('ownerName')
 
-    match rank:
-        case "1":
+    rank = ''
+    match raw_rank:
+        case 1:
             rank = locale.t('mcim.message.cluster.gold')
-        case "2":
+        case 2:
             rank = locale.t('mcim.message.cluster.silver')
-        case "3":
+        case 3:
             rank = locale.t('mcim.message.cluster.bronze')
+        case _:
+            rank = str(raw_rank)
 
     message = f'{status}{fullsize} | ' if show_status else ''
     return f'{message}{locale.t('mcim.message.top',
