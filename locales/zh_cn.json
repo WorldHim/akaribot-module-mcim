@@ -7,6 +7,7 @@
     "mcim.help.online": "获取在线节点。",
     "mcim.help.banned": "获取封禁节点。",
     "mcim.help.source": "获取同步源信息。",
+    "mcim.help.yesterday": "获取昨日统计信息。",
     "mcim.message.cluster.invalid": "无效的节点",
     "mcim.message.status": "当前在线节点：${onlines} 个\n当日全网总请求：${hits} 次\n当日全网总流量：${size}\n同步源数量：${sources} 个\n总文件数：${totalFiles} 个\n总文件大小：${totalSize}\n主控在线时间：${runningDays} 天 ${runningHours} 小时 ${runningMinutes} 分钟 ${runningSeconds} 秒",
     "mcim.message.cached.status": "MCIM 已缓存：\nCurseforge 模组 ${cf_mod} 个，文件 ${cf_file} 个，指纹 ${cf_fingerprint} 个\nModrinth 项目 ${mr_project} 个，版本 ${mr_version} 个，文件 ${mr_file} 个\nCDN 文件 ${cdn_file} 个",
@@ -24,7 +25,7 @@
     "mcim.message.cluster.full": "🌕",
     "mcim.message.cluster.frag": "🌙",
     "mcim.message.cluster.proxy": "反代",
-    "mcim.message.cluster.nonproxy": "本地",
+    "mcim.message.cluster.local": "本地",
     "mcim.message.cluster.masterstat": "主控统计",
     "mcim.message.cluster.selfstat": "节点上报",
     "mcim.message.cluster.online.detail": "🟩 在线",
@@ -33,12 +34,13 @@
     "mcim.message.cluster.full.detail": "🌕 全量",
     "mcim.message.cluster.frag.detail": "🌙 分片",
     "mcim.message.cluster.proxy.detail": "反代",
-    "mcim.message.cluster.nonproxy.detail": "本地",
+    "mcim.message.cluster.local.detail": "本地",
     "mcim.message.cluster.masterstat.detail": "主控统计",
     "mcim.message.cluster.selfstat.detail": "节点上报",
     "mcim.message.cluster.gold": "🥇",
     "mcim.message.cluster.silver": "🥈",
     "mcim.message.cluster.bronze": "🥉",
+    "mcim.message.yesterday.status": "昨日全网总请求：${hits} 次\n昨日全网总流量：${size}",
 
-    "mcim_rss.help.desc":"推送 MCIMirror 相关数据。"
+    "mcim_rss.help.desc": "推送 MCIMirror 相关数据。"
 }

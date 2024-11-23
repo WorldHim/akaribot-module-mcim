@@ -4,6 +4,7 @@ from core.builtins import Bot, Image, Plain
 from core.component import module
 from core.utils.http import get_url
 from core.scheduler import CronTrigger
+from core.utils.i18n import Locale
 from core.logger import Logger
 
 from modules.mcim import utils
@@ -134,11 +135,20 @@ mcim_rss = module(
 
 @mcim_rss.schedule(trigger=CronTrigger.from_crontab('5 0 * * *'))
 async def notify():
+    locale = Locale('zh_cn')
+
     Logger.info('获取昨日统计信息...')
-
-    msg_list = []
-
     yesterday = await get_url(f'{API}/stats/yesterday', fmt='json')
+
+    hits = yesterday.get('total').get('hits')
+    size = utils.size_convert(yesterday.get('total').get('bytes'))
+
+
+    msg_list = [locale.t('mcim.message.yesterday.status',
+                         hits=hits,
+                         size=size
+                         )]
+
     yesterday_rank_list = yesterday.get('rank')
 
     for cluster in yesterday_rank_list:

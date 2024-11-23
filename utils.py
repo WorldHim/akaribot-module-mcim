@@ -116,7 +116,7 @@ def generate_cluster(msg: Bot.MessageSession, cluster: dict):
 
     clusterId = cluster.get('clusterId')
     fullsize = msg.locale.t('mcim.message.cluster.full.detail') if cluster.get('fullsize') else msg.locale.t('mcim.message.cluster.frag.detail')
-    proxy = msg.locale.t('mcim.message.cluster.proxy.detail') if cluster.get('isProxy') else msg.locale.t('mcim.message.cluster.nonproxy.detail')
+    proxy = msg.locale.t('mcim.message.cluster.proxy.detail') if cluster.get('isProxy') else msg.locale.t('mcim.message.cluster.local.detail')
     stat = msg.locale.t('mcim.message.cluster.masterstat')
     version = cluster.get('version')
     createdAt = msg.ts2strftime(cluster.get('createdAt')/1000, timezone=False)
