@@ -1,4 +1,3 @@
-import re
 from datetime import datetime
 
 from core.builtins import Bot, Image, Plain
@@ -46,11 +45,13 @@ async def rank(msg: Bot.MessageSession, rank: int = 1):
     if rank < 1 or rank > len(rank_list):
         await msg.finish(msg.locale.t('mcim.message.cluster.invalid'))
 
-    msg_list = utils.generate_cluster(rank_list[rank - 1])
+    cluster = rank_list[rank - 1]
+    banner = cluster.get('sponsorBanner')
+    msg_list = utils.generate_cluster(msg, cluster)
 
     await msg.send_message(msg_list[0])
-
-    await msg.finish(msg_list[1])
+    await msg.send_message(msg_list[1])
+    await msg.finish([Image(banner)])
 
 @mcim.command('online {{mcim.help.online}}')
 async def online(msg: Bot.MessageSession):

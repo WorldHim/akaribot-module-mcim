@@ -97,16 +97,16 @@ def generate_cache(cache: dict, locale: Bot.MessageSession.locale = Locale('zh_c
                     cdn_file=cdn['file']
                     )
 
-def generate_cluster(cluster: dict, locale: Bot.MessageSession.locale = Locale('zh_cn')):
+def generate_cluster(msg: Bot.MessageSession, cluster: dict):
     message = []
 
-    status = locale.t('mcim.message.cluster.online.detail') if cluster.get('isOnline') else (locale.t('mcim.message.cluster.banned.detail') if cluster.get('isBanned') else locale.t('mcim.message.cluster.offline.detail'))
+    status = msg.locale.t('mcim.message.cluster.online.detail') if cluster.get('isOnline') else (msg.locale.t('mcim.message.cluster.banned.detail') if cluster.get('isBanned') else msg.locale.t('mcim.message.cluster.offline.detail'))
     clusterName = cluster.get('clusterName')
     hits = cluster.get('hits')
     bytes = size_convert(cluster.get('bytes'))
     bandwidth = cluster.get('bandwidth')
 
-    message.append([locale.t('mcim.message.cluster.status',
+    message.append([msg.locale.t('mcim.message.cluster.status',
                             clusterName=clusterName,
                             status=status,
                             hits=hits,
@@ -115,18 +115,18 @@ def generate_cluster(cluster: dict, locale: Bot.MessageSession.locale = Locale('
                             )])
 
     clusterId = cluster.get('clusterId')
-    fullsize = locale.t('mcim.message.cluster.full.detail') if cluster.get('fullsize') else locale.t('mcim.message.cluster.frag.detail')
-    proxy = locale.t('mcim.message.cluster.proxy.detail') if cluster.get('isProxy') else locale.t('mcim.message.cluster.nonproxy.detail')
-    stat = locale.t('mcim.message.cluster.masterstat')
+    fullsize = msg.locale.t('mcim.message.cluster.full.detail') if cluster.get('fullsize') else msg.locale.t('mcim.message.cluster.frag.detail')
+    proxy = msg.locale.t('mcim.message.cluster.proxy.detail') if cluster.get('isProxy') else msg.locale.t('mcim.message.cluster.nonproxy.detail')
+    stat = msg.locale.t('mcim.message.cluster.masterstat')
     version = cluster.get('version')
-    createdAt = Bot.ts2strftime(cluster.get('createdAt')/1000, timezone=False)
-    downTime = Bot.ts2strftime(cluster.get('downTime')/1000, timezone=False)
+    createdAt = msg.ts2strftime(cluster.get('createdAt')/1000, timezone=False)
+    downTime = msg.ts2strftime(cluster.get('downTime')/1000, timezone=False)
 
     ownerName = cluster.get('ownerName')
     sponsor = cluster.get('sponsor')
     sponsorUrl = cluster.get('sponsorUrl')
 
-    message.append([locale.t('mcim.message.cluster.detail',
+    message.append([msg.locale.t('mcim.message.cluster.detail',
                                  clusterId=clusterId,
                                  fullsize=fullsize,
                                  proxy=proxy,
@@ -135,8 +135,8 @@ def generate_cluster(cluster: dict, locale: Bot.MessageSession.locale = Locale('
                                  createdAt=createdAt,
                                  downTime=downTime
                                  ),
-                    locale.t('mcim.message.owner', ownerName=ownerName),
-                    locale.t('mcim.message.sponsor', sponsor=sponsor, sponsorUrl=sponsorUrl
+                    msg.locale.t('mcim.message.owner', ownerName=ownerName),
+                    msg.locale.t('mcim.message.sponsor', sponsor=sponsor, sponsorUrl=sponsorUrl
                     )])
 
     return message
