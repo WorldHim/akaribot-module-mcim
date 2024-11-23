@@ -125,19 +125,14 @@ async def source(msg: Bot.MessageSession):
 
     await msg.finish(msg_list)
 
-mcim_rss = module(
-    bind_prefix='mcim_rss',
-    desc='{mcim_rss.help.desc}',
-    developers=['WorldHim'],
-    recommend_modules=['mcim'],
-    support_languages=['zh_cn']
-)
+@mcim.command('yesterday {{mcim.help.yesterday}}')
+async def yesterday(msg: Bot.MessageSession = None):
+    if msg is None:
+        locale = Locale('zh_cn')
+        Logger.info('获取昨日统计信息...')
+    else:
+        locale = msg.locale
 
-@mcim_rss.schedule(trigger=CronTrigger.from_crontab('5 0 * * *'))
-async def notify():
-    locale = Locale('zh_cn')
-
-    Logger.info('获取昨日统计信息...')
     yesterday = await get_url(f'{API}/stats/yesterday', fmt='json')
 
     hits = yesterday.get('total').get('hits')
@@ -152,6 +147,21 @@ async def notify():
     yesterday_rank_list = yesterday.get('rank')
 
     for cluster in yesterday_rank_list:
-        msg_list.append(utils.generate_list(cluster.get('rank'), cluster, show_status=False))
+        msg_list.append(utils.generate_list(cluster.get('rank'), cluster, yesterday=True))
 
-    await Bot.FetchTarget.post_message('mcim_rss', msg_list)
+    if msg is None:
+        await Bot.FetchTarget.post_message('mcim_rss', msg_list)
+    else:
+        await msg.finish(msg_list)
+
+mcim_rss = module(
+    bind_prefix='mcim_rss',
+    desc='{mcim_rss.help.desc}',
+    developers=['WorldHim'],
+    recommend_modules=['mcim'],
+    support_languages=['zh_cn']
+)
+
+@mcim_rss.schedule(trigger=CronTrigger.from_crontab('5 0 * * *'))
+async def notify():
+    await yesterday()

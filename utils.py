@@ -24,18 +24,18 @@ def search(cluster_list: dict, key_list: list, value: str):
 
     return result
 
-def generate_list(raw_rank: int, cluster: dict, locale: Bot.MessageSession.locale = Locale('zh_cn'), show_status: bool = True):
-    status = locale.t('mcim.message.cluster.online') if cluster.get('isOnline') else (locale.t('mcim.message.cluster.banned') if cluster.get('isBanned') else locale.t('mcim.message.cluster.offline'))
-    fullsize = locale.t('mcim.message.cluster.full') if cluster.get('fullsize') else locale.t('mcim.message.cluster.frag')
+def generate_list(raw_rank: int, cluster: dict, locale: Bot.MessageSession.locale = Locale('zh_cn'), yesterday: bool = False):
+    if yesterday:
+        status = locale.t('mcim.message.cluster.online') if cluster.get('isOnline') else (locale.t('mcim.message.cluster.banned') if cluster.get('isBanned') else locale.t('mcim.message.cluster.offline'))
+        size = locale.t('mcim.message.cluster.full') if cluster.get('fullsize') else locale.t('mcim.message.cluster.frag')
+        version = cluster.get('version')
 
     clusterName = cluster.get('clusterName')
-    version = cluster.get('version')
     hits = cluster.get('hits')
     bytes = size_convert(cluster.get('bytes'))
 
     ownerName = cluster.get('ownerName')
 
-    rank = ''
     match raw_rank:
         case 1:
             rank = locale.t('mcim.message.cluster.gold')
@@ -46,15 +46,24 @@ def generate_list(raw_rank: int, cluster: dict, locale: Bot.MessageSession.local
         case _:
             rank = str(raw_rank)
 
-    message = f'{status}{fullsize} | ' if show_status else ''
-    return f'{message}{locale.t('mcim.message.top',
-                                rank=rank,
-                                clusterName=clusterName,
-                                version=version,
-                                hits=hits,
-                                bytes=bytes,
-                                ownerName=ownerName
-                                )}'
+    if yesterday:
+        return locale.t('mcim.message.yesterday.top',
+                        rank=rank,
+                        clusterName=clusterName,
+                        hits=hits,
+                        bytes=bytes,
+                        ownerName=ownerName
+                        )
+    else:
+        return f'{locale.t('mcim.message.top',
+                             rank=rank,
+                             status=status,
+                             size=size,
+                             clusterName=clusterName,
+                             version=version,
+                             hits=hits,
+                             bytes=bytes
+                         )}\n{locale.t('mcim.message.owner', ownerName=ownerName)}'
 
 def generate_dashboard(dashboard: dict, locale: Bot.MessageSession.locale = Locale('zh_cn')):
     onlines = dashboard.get('onlines')
