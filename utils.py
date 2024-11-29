@@ -25,7 +25,7 @@ def search(cluster_list: dict, key_list: list, value: str):
     return result
 
 def generate_list(raw_rank: int, cluster: dict, locale: Bot.MessageSession.locale = Locale('zh_cn'), yesterday: bool = False):
-    if yesterday:
+    if not yesterday:
         status = locale.t('mcim.message.cluster.online') if cluster.get('isOnline') else (locale.t('mcim.message.cluster.banned') if cluster.get('isBanned') else locale.t('mcim.message.cluster.offline'))
         size = locale.t('mcim.message.cluster.full') if cluster.get('fullsize') else locale.t('mcim.message.cluster.frag')
         version = cluster.get('version')
