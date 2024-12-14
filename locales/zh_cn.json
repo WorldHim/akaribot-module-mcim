@@ -20,6 +20,7 @@
     "mcim.message.source": "同步源：${name}\n文件数量：${count}\n同步时间：${lastUpdated}\n插件同步：${isFromPlugin}",
     "mcim.message.result.empty": "当前没有符合条件的节点在线",
     "mcim.message.query_time": "请求时间：${queryTime}",
+    "mcim.message.banner.failed": "Banner 获取失败",
     "mcim.message.cluster.online": "🟩",
     "mcim.message.cluster.offline": "🟥",
     "mcim.message.cluster.banned": "🟫",
@@ -42,6 +43,9 @@
     "mcim.message.cluster.silver": "🥈",
     "mcim.message.cluster.bronze": "🥉",
     "mcim.message.yesterday.status": "昨日全网总请求：${hits} 次\n昨日全网总流量：${size}",
+    "mcim.message.yesterday.failed": "盐木还没修好……",
 
-    "mcim_rss.help.desc": "推送 MCIMirror 相关数据。"
+    "mcim_rss.help.desc": "推送 MCIMirror 相关数据。",
+
+    "mcim_cluster_rss.help.desc": "推送 MCIMirror 节点状态"
 }

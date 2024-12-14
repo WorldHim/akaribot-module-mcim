@@ -3,7 +3,7 @@ from datetime import datetime
 from core.builtins import Bot, Image, Plain
 from core.component import module
 from core.utils.http import get_url
-from core.scheduler import CronTrigger
+from core.scheduler import CronTrigger, IntervalTrigger
 from core.utils.i18n import Locale
 from core.logger import Logger
 
@@ -11,6 +11,8 @@ from modules.mcim import utils
 
 API = 'https://files.mcimirror.top/api'
 DEFAULT_KEY = ['clusterName', 'ownerName', 'sponsor']
+
+TRACK_CLUSTERID = '43474a59a6436a79acd8cea0'
 
 mcim = module(
     bind_prefix='mcim',
@@ -52,7 +54,10 @@ async def rank(msg: Bot.MessageSession, rank: int = 1):
 
     await msg.send_message(msg_list[0])
     await msg.send_message(msg_list[1])
-    await msg.finish([Image(banner)])
+    try:
+        await msg.finish([Image(banner)])
+    except Exception:
+        await msg.finish(msg.locale.t('mcim.message.banner.failed'))
 
 @mcim.command('online {{mcim.help.online}}')
 async def online(msg: Bot.MessageSession):
@@ -133,21 +138,23 @@ async def yesterday(msg: Bot.MessageSession = None):
     else:
         locale = msg.locale
 
-    yesterday = await get_url(f'{API}/stats/yesterday', fmt='json')
+    try:
+        yesterday = await get_url(f'{API}/stats/yesterday', status_code=200, fmt='json')
 
-    hits = yesterday.get('total').get('hits')
-    size = utils.size_convert(yesterday.get('total').get('bytes'))
+        hits = yesterday.get('total').get('hits')
+        size = utils.size_convert(yesterday.get('total').get('bytes'))
 
-
-    msg_list = [locale.t('mcim.message.yesterday.status',
+        msg_list = [locale.t('mcim.message.yesterday.status',
                          hits=hits,
                          size=size
                          )]
+        yesterday_rank_list = yesterday.get('rank')
 
-    yesterday_rank_list = yesterday.get('rank')
+        for cluster in yesterday_rank_list:
+            msg_list.append(utils.generate_list(cluster.get('rank'), cluster, yesterday=True))
 
-    for cluster in yesterday_rank_list:
-        msg_list.append(utils.generate_list(cluster.get('rank'), cluster, yesterday=True))
+    except Exception:
+        msg_list = [locale.t('mcim.message.yesterday.failed')]
 
     if msg is None:
         await Bot.FetchTarget.post_message('mcim_rss', msg_list)
@@ -165,3 +172,15 @@ mcim_rss = module(
 @mcim_rss.schedule(trigger=CronTrigger.from_crontab('5 0 * * *'))
 async def notify():
     await yesterday()
+
+mcim_cluster_rss = module(
+    bind_prefix='mcim_cluster_rss',
+    desc='{mcim_cluster_rss.help.desc}',
+    developers=['WorldHim'],
+    recommend_modules=['mcim'],
+    support_languages=['zh_cn']
+)
+
+# @mcim_cluster_rss.schedule(IntervalTrigger(seconds=300))
+# async def cluster_notify():
+#     cluster = await get_url(f'{API}/clusters/{TRACK_CLUSTERID}', fmt='json')
