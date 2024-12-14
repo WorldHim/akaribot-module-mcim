@@ -9,7 +9,7 @@ def size_convert(value):
     size = 1024.0
     for i in range(len(units)):
         if(value / size) < 1:
-            return '%.2f%s' % (value, ' ' + units[i])
+            return f'{value:.2f} {units[i]}'
         value /= size
 
 def search(cluster_list: dict, key_list: list, value: str):
