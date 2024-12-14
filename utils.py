@@ -7,9 +7,9 @@ from core.utils.i18n import Locale
 def size_convert(value):
     units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
     size = 1024.0
-    for i in range(len(units)):
+    for i, item in enumerate(units):
         if(value / size) < 1:
-            return f'{value:.2f} {units[i]}'
+            return f'{value:.2f} {item}'
         value /= size
 
 def search(cluster_list: dict, key_list: list, value: str):
