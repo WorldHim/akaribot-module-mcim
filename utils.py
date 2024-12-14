@@ -7,7 +7,7 @@ from core.utils.i18n import Locale
 def size_convert(value):
     units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
     size = 1024.0
-    for i, item in enumerate(units):
+    for item in units:
         if(value / size) < 1:
             return f'{value:.2f} {item}'
         value /= size
