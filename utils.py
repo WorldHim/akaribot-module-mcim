@@ -54,16 +54,15 @@ def generate_list(raw_rank: int, cluster: dict, locale: Bot.MessageSession.local
                         bytes=bytes,
                         ownerName=ownerName
                         )
-    else:
-        return f'{locale.t('mcim.message.top',
-                             rank=rank,
-                             status=status,
-                             size=size,
-                             clusterName=clusterName,
-                             version=version,
-                             hits=hits,
-                             bytes=bytes
-                         )}\n{locale.t('mcim.message.owner', ownerName=ownerName)}'
+    return f'{locale.t('mcim.message.top',
+                         rank=rank,
+                         status=status,
+                         size=size,
+                         clusterName=clusterName,
+                         version=version,
+                         hits=hits,
+                         bytes=bytes
+                     )}\n{locale.t('mcim.message.owner', ownerName=ownerName)}'
 
 def generate_dashboard(dashboard: dict, locale: Bot.MessageSession.locale = Locale('zh_cn')):
     onlines = dashboard.get('onlines')
