@@ -114,7 +114,7 @@ async def search(msg: Bot.MessageSession, keyword: str):
     cluster_list = utils.search(rank_list, DEFAULT_KEY, keyword)
     for (rank, cluster) in cluster_list:
         msg_list.append(utils.generate_list(rank, cluster, msg.locale))
-    
+
     if msg_list:
         await msg.finish(msg_list)
     else:
