@@ -161,4 +161,4 @@ def generate_source(source: dict, locale: Bot.MessageSession.locale = Locale('zh
                     lastUpdated=lastUpdated,
                     isFromPlugin=isFromPlugin
                     )
-        
+
