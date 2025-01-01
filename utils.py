@@ -24,7 +24,7 @@ def search(cluster_list: dict, key_list: list, value: str):
 
     return result
 
-def generate_list(raw_rank: int, cluster: dict, locale: Bot.MessageSession.locale = Locale('zh_cn'), yesterday: bool = False):
+def generate_list(raw_rank: int, cluster: dict, locale = Locale('zh_cn'), yesterday: bool = False):
     if not yesterday:
         status = locale.t('mcim.message.cluster.online') if cluster.get('isOnline') else (locale.t('mcim.message.cluster.banned') if cluster.get('isBanned') else locale.t('mcim.message.cluster.offline'))
         size = locale.t('mcim.message.cluster.full') if cluster.get('fullsize') else locale.t('mcim.message.cluster.frag')
@@ -65,7 +65,7 @@ def generate_list(raw_rank: int, cluster: dict, locale: Bot.MessageSession.local
                              bytes=bytes
                          )}\n{locale.t('mcim.message.owner', ownerName=ownerName)}'
 
-def generate_dashboard(dashboard: dict, locale: Bot.MessageSession.locale = Locale('zh_cn')):
+def generate_dashboard(dashboard: dict, locale = Locale('zh_cn')):
     onlines = dashboard.get('onlines')
     hits = dashboard.get('today').get('hits')
     size = size_convert(dashboard.get('today').get('bytes'))
@@ -91,7 +91,7 @@ def generate_dashboard(dashboard: dict, locale: Bot.MessageSession.locale = Loca
                     runningSeconds=runningSeconds
                     )
 
-def generate_cache(cache: dict, locale: Bot.MessageSession.locale = Locale('zh_cn')):
+def generate_cache(cache: dict, locale = Locale('zh_cn')):
     curseforge = cache['curseforge']
     modrinth = cache['modrinth']
     cdn = cache['file_cdn']
@@ -150,7 +150,7 @@ def generate_cluster(msg: Bot.MessageSession, cluster: dict):
 
     return message
 
-def generate_source(source: dict, locale: Bot.MessageSession.locale = Locale('zh_cn')):
+def generate_source(source: dict, locale = Locale('zh_cn')):
     name = source.get('name')
     count = source.get('count')
     lastUpdated = source.get('lastUpdated')
