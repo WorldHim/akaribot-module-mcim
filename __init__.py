@@ -7,7 +7,7 @@ from core.scheduler import CronTrigger, IntervalTrigger
 from core.utils.i18n import Locale
 from core.logger import Logger
 
-from modules.mcim import utils
+from modules.mcim import utils, draw
 
 API = 'https://files.mcimirror.top/api'
 DEFAULT_KEY = ['clusterName', 'ownerName', 'sponsor']
@@ -155,6 +155,31 @@ async def yesterday(msg: Bot.MessageSession = None):
 
     except Exception:
         msg_list = [locale.t('mcim.message.yesterday.failed')]
+
+    if msg is None:
+        await Bot.FetchTarget.post_message('mcim_rss', msg_list)
+    else:
+        await msg.send_message(msg_list)
+
+    msg_list = []
+
+    hits_list = yesterday.get('hits')
+    hits_label = locale.t('mcim.message.yesterday.hits')
+    hits_color = '#3F51C0'
+    hits_figure = draw.generate_figure(hits_list, hits_label, hits_color)
+    msg_list.append(Image(hits_figure))
+
+    bytes_list = yesterday.get('bytes')
+    bytes_label = locale.t('mcim.message.yesterday.bytes')
+    bytes_color = '#FFA500'
+    bytes_figure = draw.generate_figure(draw.byte2GB(bytes_list), bytes_label, bytes_color)
+    msg_list.append(Image(bytes_figure))
+
+    rejected_list = yesterday.get('rejected')
+    rejected_label = locale.t('mcim.message.yesterday.rejected')
+    rejected_color = '#FF0000'
+    rejected_figure = draw.generate_figure(rejected_list, rejected_label, rejected_color)
+    msg_list.append(Image(rejected_figure))
 
     if msg is None:
         await Bot.FetchTarget.post_message('mcim_rss', msg_list)

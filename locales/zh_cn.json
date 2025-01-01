@@ -43,6 +43,9 @@
     "mcim.message.cluster.silver": "🥈",
     "mcim.message.cluster.bronze": "🥉",
     "mcim.message.yesterday.status": "昨日全网总请求：${hits} 次\n昨日全网总流量：${size}",
+    "mcim.message.yesterday.hits": "昨日请求分布（次）",
+    "mcim.message.yesterday.bytes": "昨日流量分布（GB）",
+    "mcim.message.yesterday.rejected": "昨日拒绝请求趋势（次）",
     "mcim.message.yesterday.failed": "盐木还没修好……",
 
     "mcim_rss.help.desc": "推送 MCIMirror 相关数据。",
