@@ -136,7 +136,9 @@ async def source(msg: Bot.MessageSession):
 
 @mcim.command('yesterday [--full] {{mcim.help.yesterday}}',
               options_desc={'--full': '{mcim.help.option.full}'})
-async def yesterday(msg: Bot.MessageSession = None, full: bool = False):
+async def yesterday(msg: Bot.MessageSession = None):
+    full = msg.parsed_msg.get('--full', False)
+
     if msg is None:
         locale = Locale('zh_cn')
         Logger.info('获取昨日统计信息...')
@@ -168,14 +170,16 @@ async def yesterday(msg: Bot.MessageSession = None, full: bool = False):
 
     msg_list = []
 
-    if not full:
-        hits_list = yesterday.get('hits')
-        hits_label = locale.t('mcim.message.yesterday.hits')
+    hits_list = yesterday.get('hits')
+    hits_label = locale.t('mcim.message.yesterday.hits')
+
+    bytes_list = yesterday.get('bytes')
+    bytes_label = locale.t('mcim.message.yesterday.bytes')
+
+    if full:
         hits_figure = draw.single_figure(hits_list, hits_label, HITS_COLOR)
         msg_list.append(Image(hits_figure))
 
-        bytes_list = yesterday.get('bytes')
-        bytes_label = locale.t('mcim.message.yesterday.bytes')
         bytes_figure = draw.single_figure(draw.byte2GB(bytes_list), bytes_label, BYTES_COLOR)
         msg_list.append(Image(bytes_figure))
 
@@ -184,14 +188,8 @@ async def yesterday(msg: Bot.MessageSession = None, full: bool = False):
         rejected_figure = draw.single_figure(rejected_list, rejected_label, REJECTED_COLOR)
         msg_list.append(Image(rejected_figure))
     else:
-        hits_list = yesterday.get('hits')
-        hits_label = locale.t('mcim.message.yesterday.hits')
-
-        bytes_list = yesterday.get('bytes')
-        bytes_label = locale.t('mcim.message.yesterday.bytes')
-        
         figure = draw.complex_figure(hits_list, hits_label, HITS_COLOR,
-                                     bytes_list, bytes_label, BYTES_COLOR)
+                                     draw.byte2GB(bytes_list), bytes_label, BYTES_COLOR)
         msg_list.append(Image(figure))
 
     if msg is None:

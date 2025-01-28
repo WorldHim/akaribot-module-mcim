@@ -28,17 +28,31 @@ def single_figure(data: list, yl: str, color: str):
     plt.savefig(figpath)
     return figpath
 
-def complex_figure(data_back: list, yl_back: str, color_back: str,
-                   data_front: list, yl_front: str, color_front: str):
+def complex_figure(data_bottom: list, yl_bottom: str, color_bottom: str,
+                   data_top: list, yl_top: str, color_top: str):
     hours = [f"{h}:00" for h in range(1, 25)]
     figpath = f'{random_cache_path()}.png'
-    fig, ax_back = plt.subplots(figsize=(12, 6))
+    fig, ax_bottom = plt.subplots(figsize=(18, 6))
+    ax_top = ax_bottom.twinx()
 
-    ax_back.plot(hours, data_back, color=color_back, linestyle='-', alpha=0.5, label='Hits', zorder=3)
-    ax_back.scatter(hours, data_back, edgecolor=color_back, facecolor='white', zorder=5)
-    ax_back.fill_between(hours, data_back, color=color_back, alpha=0.1, zorder=1)
-    ax_back.set_ylabel(yl_back, fontsize=12, color='blue')
-    ax_back.tick_params(axis='y', labelcolor='blue')
+    ax_bottom.plot(hours, data_bottom, color=color_bottom, linestyle='-', alpha=0.5, label='Hits', zorder=3)
+    ax_bottom.scatter(hours, data_bottom, edgecolor=color_bottom, facecolor='white', zorder=5)
+    ax_bottom.fill_between(hours, data_bottom, color=color_bottom, alpha=0.1, zorder=1)
+    ax_bottom.set_ylabel(yl_bottom, fontsize=12, fontproperties=font)
+
+    ax_top.plot(hours, data_top, color=color_top, linestyle='-', alpha=0.5, label='Hits', zorder=3)
+    ax_top.scatter(hours, data_top, edgecolor=color_top, facecolor='white', zorder=5)
+    ax_top.fill_between(hours, data_top, color=color_top, alpha=0.1, zorder=1)
+    ax_top.set_ylabel(yl_top, fontsize=12, fontproperties=font)
+
+    ax_bottom.legend().set_visible(False)
+    ax_top.legend().set_visible(False)
+    ax_bottom.spines['top'].set_visible(False)
+    ax_top.spines['top'].set_visible(False)
+    ax_bottom.spines['left'].set_visible(False)
+    ax_top.spines['left'].set_visible(False)
+    ax_bottom.spines['right'].set_visible(False)
+    ax_top.spines['right'].set_visible(False)
 
     plt.savefig(figpath)
     return figpath
