@@ -154,7 +154,7 @@ def generate_source(source: dict, locale = Locale('zh_cn')):
     name = source.get('name')
     count = source.get('count')
     lastUpdated = source.get('lastUpdated')
-    isFromPlugin = locale.t('yes') if source.get('isFromPlugin') else locale.t('no')
+    isFromPlugin = locale.t('message.yes') if source.get('isFromPlugin') else locale.t('message.no')
     return locale.t('mcim.message.source',
                     name=name,
                     count=count,

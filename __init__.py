@@ -14,6 +14,10 @@ DEFAULT_KEY = ['clusterName', 'ownerName', 'sponsor']
 
 TRACK_CLUSTERID = '43474a59a6436a79acd8cea0'
 
+HITS_COLOR = '#3F51C0'
+BYTES_COLOR = '#FFA500'
+REJECTED_COLOR = '#FF0000'
+
 mcim = module(
     bind_prefix='mcim',
     desc='{mcim.help.desc}',
@@ -130,8 +134,9 @@ async def source(msg: Bot.MessageSession):
 
     await msg.finish(msg_list)
 
-@mcim.command('yesterday {{mcim.help.yesterday}}')
-async def yesterday(msg: Bot.MessageSession = None):
+@mcim.command('yesterday [--full] {{mcim.help.yesterday}}',
+              options_desc={'--full': '{mcim.help.option.full}'})
+async def yesterday(msg: Bot.MessageSession = None, full: bool = False):
     if msg is None:
         locale = Locale('zh_cn')
         Logger.info('获取昨日统计信息...')
@@ -163,23 +168,31 @@ async def yesterday(msg: Bot.MessageSession = None):
 
     msg_list = []
 
-    hits_list = yesterday.get('hits')
-    hits_label = locale.t('mcim.message.yesterday.hits')
-    hits_color = '#3F51C0'
-    hits_figure = draw.generate_figure(hits_list, hits_label, hits_color)
-    msg_list.append(Image(hits_figure))
+    if not full:
+        hits_list = yesterday.get('hits')
+        hits_label = locale.t('mcim.message.yesterday.hits')
+        hits_figure = draw.single_figure(hits_list, hits_label, HITS_COLOR)
+        msg_list.append(Image(hits_figure))
 
-    bytes_list = yesterday.get('bytes')
-    bytes_label = locale.t('mcim.message.yesterday.bytes')
-    bytes_color = '#FFA500'
-    bytes_figure = draw.generate_figure(draw.byte2GB(bytes_list), bytes_label, bytes_color)
-    msg_list.append(Image(bytes_figure))
+        bytes_list = yesterday.get('bytes')
+        bytes_label = locale.t('mcim.message.yesterday.bytes')
+        bytes_figure = draw.single_figure(draw.byte2GB(bytes_list), bytes_label, BYTES_COLOR)
+        msg_list.append(Image(bytes_figure))
 
-    rejected_list = yesterday.get('rejected')
-    rejected_label = locale.t('mcim.message.yesterday.rejected')
-    rejected_color = '#FF0000'
-    rejected_figure = draw.generate_figure(rejected_list, rejected_label, rejected_color)
-    msg_list.append(Image(rejected_figure))
+        rejected_list = yesterday.get('rejected')
+        rejected_label = locale.t('mcim.message.yesterday.rejected')
+        rejected_figure = draw.single_figure(rejected_list, rejected_label, REJECTED_COLOR)
+        msg_list.append(Image(rejected_figure))
+    else:
+        hits_list = yesterday.get('hits')
+        hits_label = locale.t('mcim.message.yesterday.hits')
+
+        bytes_list = yesterday.get('bytes')
+        bytes_label = locale.t('mcim.message.yesterday.bytes')
+        
+        figure = draw.complex_figure(hits_list, hits_label, HITS_COLOR,
+                                     bytes_list, bytes_label, BYTES_COLOR)
+        msg_list.append(Image(figure))
 
     if msg is None:
         await Bot.FetchTarget.post_message('mcim_rss', msg_list)
