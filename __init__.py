@@ -42,7 +42,7 @@ async def status(msg: Bot.MessageSession):
 
     await msg.send_message(msg_list)
 
-    cache = await get_url(f'https://mod.mcimirror.top/statistics', fmt='json')
+    cache = await get_url('https://mod.mcimirror.top/statistics', fmt='json')
 
     await msg.finish([utils.generate_cache(cache)])
 
