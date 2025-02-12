@@ -1,4 +1,5 @@
 from datetime import datetime
+from math import ceil
 
 from core.builtins import Bot, Image, Plain
 from core.component import module
@@ -93,18 +94,18 @@ async def banned(msg: Bot.MessageSession):
         await msg.finish(msg.locale.t('mcim.message.result.empty'))
 
 
-@mcim.command('top [<rank>] {{mcim.help.top}}')
-async def top(msg: Bot.MessageSession, rank: int = 10):
+@mcim.command('list [<page>] {{mcim.help.top}}')
+async def list(msg: Bot.MessageSession, page: int = 1):
     rank_list = await get_url(f'{API}/clusters', fmt='json')
 
-    if rank < 1 or rank > len(rank_list):
-        await msg.finish(msg.locale.t('mcim.message.cluster.invalid'))
+    if page < 1 or page > ceil(len(rank_list) / 10):
+        await msg.finish(msg.locale.t('mcim.message.page.invalid'))
 
     msg_list = []
 
-    for i in range(0, rank):
+    for rank in range((page - 1) * 10, page * 10):
         try:
-            msg_list.append(utils.generate_list(i+1, rank_list[i], msg.locale))
+            msg_list.append(utils.generate_list(rank, rank_list[rank], msg.locale))
         except Exception:
             break
 
