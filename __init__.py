@@ -137,10 +137,10 @@ async def source(msg: Bot.MessageSession):
 @mcim.command('yesterday [--full] {{mcim.help.yesterday}}',
               options_desc={'--full': '{mcim.help.option.full}'})
 async def yesterday(msg: Bot.MessageSession = None):
-
     if msg is None:
         locale = Locale('zh_cn')
         Logger.info('获取昨日统计信息...')
+        full = False
     else:
         locale = msg.locale
         full = msg.parsed_msg.get('--full', False)
