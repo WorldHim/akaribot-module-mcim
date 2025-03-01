@@ -66,24 +66,25 @@ def generate_list(raw_rank: int, cluster: dict, locale = Locale('zh_cn'), yester
         case _:
             rank = str(raw_rank)
 
-    if yesterday:
-        return locale.t('mcim.message.yesterday.top',
-                        rank=rank,
-                        clusterName=clusterName,
-                        hits=hits,
-                        bytes=bytes,
-                        ownerName=ownerName
-                        )
-    else:
-        return f'{locale.t('mcim.message.top',
-                             rank=rank,
-                             status=status,
-                             size=size,
-                             clusterName=clusterName,
-                             version=version,
-                             hits=hits,
-                             bytes=bytes
-                         )}\n{locale.t('mcim.message.owner', ownerName=ownerName)}'
+    return locale.t('mcim.message.yesterday.top',
+                    rank=rank,
+                    clusterName=clusterName,
+                    hits=hits,
+                    bytes=bytes,
+                    ownerName=ownerName
+                    ) \
+           if yesterday else \
+           locale.t('mcim.message.top',
+                    rank=rank,
+                    status=status,
+                    size=size,
+                    clusterName=clusterName,
+                    version=version,
+                    hits=hits,
+                    bytes=bytes
+                    ) \
+           + '\n' + \
+           locale.t('mcim.message.owner', ownerName=ownerName)
 
 def generate_dashboard(dashboard: dict, locale = Locale('zh_cn')):
     '''生成仪表盘信息
