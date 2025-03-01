@@ -5,6 +5,11 @@ from core.builtins import Bot
 from core.utils.i18n import Locale
 
 def size_convert(value):
+    '''格式转换
+    :param value: 以字节为单位的数值
+    :return: 转换后的字符串（带单位）
+    '''
+
     units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
     size = 1024.0
     for item in units:
@@ -13,6 +18,13 @@ def size_convert(value):
         value /= size
 
 def search(cluster_list: dict, key_list: list, value: str):
+    '''查找节点
+    :param cluster_list: 节点列表
+    :param key_list: 查找的键列表
+    :param value: 查找的值
+    :return: 查找结果列表
+    '''
+
     result = []
     regex = re.compile(value, re.IGNORECASE)
 
@@ -25,6 +37,14 @@ def search(cluster_list: dict, key_list: list, value: str):
     return result
 
 def generate_list(raw_rank: int, cluster: dict, locale = Locale('zh_cn'), yesterday: bool = False):
+    '''生成节点排行信息
+    :param raw_rank: 排名
+    :param cluster: 节点信息
+    :param locale: 本地化
+    :param yesterday: 是否昨日排行
+    :return: 生成的消息
+    '''
+
     if not yesterday:
         status = locale.t('mcim.message.cluster.online') if cluster.get('isOnline') else (locale.t('mcim.message.cluster.banned') if cluster.get('isBanned') else locale.t('mcim.message.cluster.offline'))
         size = locale.t('mcim.message.cluster.full') if cluster.get('fullsize') else locale.t('mcim.message.cluster.frag')
@@ -66,6 +86,12 @@ def generate_list(raw_rank: int, cluster: dict, locale = Locale('zh_cn'), yester
                          )}\n{locale.t('mcim.message.owner', ownerName=ownerName)}'
 
 def generate_dashboard(dashboard: dict, locale = Locale('zh_cn')):
+    '''生成仪表盘信息
+    :param dashboard: 仪表盘信息
+    :param locale: 本地化
+    :return: 生成的消息
+    '''
+
     onlines = dashboard.get('onlines')
     hits = dashboard.get('today').get('hits')
     size = size_convert(dashboard.get('today').get('bytes'))
@@ -92,6 +118,12 @@ def generate_dashboard(dashboard: dict, locale = Locale('zh_cn')):
                     )
 
 def generate_cache(cache: dict, locale = Locale('zh_cn')):
+    '''生成缓存信息
+    :param cache: 缓存信息
+    :param locale: 本地化
+    :return: 生成的消息
+    '''
+
     curseforge = cache['curseforge']
     modrinth = cache['modrinth']
     cdn = cache['file_cdn']
@@ -107,6 +139,12 @@ def generate_cache(cache: dict, locale = Locale('zh_cn')):
                     )
 
 def generate_cluster(msg: Bot.MessageSession, cluster: dict):
+    '''生成节点信息
+    :param msg: 消息会话
+    :param cluster: 节点信息
+    :return: 生成的消息
+    '''
+
     message = []
 
     status = msg.locale.t('mcim.message.cluster.online.detail') if cluster.get('isOnline') else (msg.locale.t('mcim.message.cluster.banned.detail') if cluster.get('isBanned') else msg.locale.t('mcim.message.cluster.offline.detail'))
@@ -151,6 +189,12 @@ def generate_cluster(msg: Bot.MessageSession, cluster: dict):
     return message
 
 def generate_source(source: dict, locale = Locale('zh_cn')):
+    '''生成数据源信息
+    :param source: 数据源信息
+    :param locale: 本地化
+    :return: 生成的消息
+    '''
+
     name = source.get('name')
     count = source.get('count')
     lastUpdated = source.get('lastUpdated')
@@ -161,4 +205,3 @@ def generate_source(source: dict, locale = Locale('zh_cn')):
                     lastUpdated=lastUpdated,
                     isFromPlugin=isFromPlugin
                     )
-
