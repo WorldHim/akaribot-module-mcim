@@ -48,7 +48,7 @@
     "mcim.message.yesterday.hits": "昨日请求分布（次）",
     "mcim.message.yesterday.bytes": "昨日流量分布（GB）",
     "mcim.message.yesterday.rejected": "昨日拒绝请求趋势（次）",
-    "mcim.message.yesterday.failed": "盐木还没修好……",
+    "mcim.message.yesterday.failed": "由于多种原因，OpenMCIM 已暂停运行，MCIM API 不受影响。文件下载已自动重定向会源站。高考完后可能后可能重制后投入使用，敬请期待。",
 
     "mcim_rss.help.desc": "推送 MCIMirror 相关数据。",
 
