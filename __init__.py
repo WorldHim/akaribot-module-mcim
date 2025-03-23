@@ -27,6 +27,12 @@ mcim = module(
     support_languages=['zh_cn']
 )
 
+async def send_yesterday(msg: Bot.MessageSession, msg_list: list):
+    if msg is None:
+        await Bot.FetchTarget.post_message('mcim_rss', msg_list)
+    else:
+        await msg.send_message(msg_list)
+
 @mcim.command()
 @mcim.command('status {{mcim.help.status}}')
 async def status(msg: Bot.MessageSession):
@@ -149,6 +155,11 @@ async def yesterday(msg: Bot.MessageSession = None):
     try:
         yesterday = await get_url(f'{API}/stats/yesterday', status_code=200, fmt='json')
 
+    except Exception:
+        msg_list = [locale.t('mcim.message.yesterday.failed')]
+        await send_yesterday(msg, msg_list)
+
+    else:
         hits = yesterday.get('total').get('hits')
         size = utils.size_convert(yesterday.get('total').get('bytes'))
 
@@ -160,43 +171,35 @@ async def yesterday(msg: Bot.MessageSession = None):
 
         for cluster in yesterday_rank_list:
             msg_list.append(utils.generate_list(cluster.get('rank'), cluster, yesterday=True))
+        
+        await send_yesterday(msg, msg_list)
 
-    except Exception:
-        msg_list = [locale.t('mcim.message.yesterday.failed')]
+        msg_list = []
 
-    if msg is None:
-        await Bot.FetchTarget.post_message('mcim_rss', msg_list)
-    else:
-        await msg.send_message(msg_list)
+        hits_list = yesterday.get('hits')
+        hits_label = locale.t('mcim.message.yesterday.hits')
 
-    msg_list = []
+        bytes_list = yesterday.get('bytes')
+        bytes_label = locale.t('mcim.message.yesterday.bytes')
 
-    hits_list = yesterday.get('hits')
-    hits_label = locale.t('mcim.message.yesterday.hits')
+        if full:
+            hits_figure = draw.single_figure(hits_list, hits_label, HITS_COLOR)
+            msg_list.append(Image(hits_figure))
 
-    bytes_list = yesterday.get('bytes')
-    bytes_label = locale.t('mcim.message.yesterday.bytes')
+            bytes_figure = draw.single_figure(draw.byte2GB(bytes_list), bytes_label, BYTES_COLOR)
+            msg_list.append(Image(bytes_figure))
 
-    if full:
-        hits_figure = draw.single_figure(hits_list, hits_label, HITS_COLOR)
-        msg_list.append(Image(hits_figure))
+            rejected_list = yesterday.get('rejected')
+            rejected_label = locale.t('mcim.message.yesterday.rejected')
+            rejected_figure = draw.single_figure(rejected_list, rejected_label, REJECTED_COLOR)
+            msg_list.append(Image(rejected_figure))
+        else:
+            figure = draw.complex_figure(hits_list, hits_label, HITS_COLOR,
+                                        draw.byte2GB(bytes_list), bytes_label, BYTES_COLOR)
+            msg_list.append(Image(figure))
+        
+        send_yesterday(msg, msg_list)
 
-        bytes_figure = draw.single_figure(draw.byte2GB(bytes_list), bytes_label, BYTES_COLOR)
-        msg_list.append(Image(bytes_figure))
-
-        rejected_list = yesterday.get('rejected')
-        rejected_label = locale.t('mcim.message.yesterday.rejected')
-        rejected_figure = draw.single_figure(rejected_list, rejected_label, REJECTED_COLOR)
-        msg_list.append(Image(rejected_figure))
-    else:
-        figure = draw.complex_figure(hits_list, hits_label, HITS_COLOR,
-                                     draw.byte2GB(bytes_list), bytes_label, BYTES_COLOR)
-        msg_list.append(Image(figure))
-
-    if msg is None:
-        await Bot.FetchTarget.post_message('mcim_rss', msg_list)
-    else:
-        await msg.finish(msg_list)
 
 mcim_rss = module(
     bind_prefix='mcim_rss',
@@ -209,15 +212,3 @@ mcim_rss = module(
 @mcim_rss.schedule(trigger=CronTrigger.from_crontab('5 0 * * *'))
 async def notify():
     await yesterday()
-
-mcim_cluster_rss = module(
-    bind_prefix='mcim_cluster_rss',
-    desc='{mcim_cluster_rss.help.desc}',
-    developers=['WorldHim'],
-    recommend_modules=['mcim'],
-    support_languages=['zh_cn']
-)
-
-# @mcim_cluster_rss.schedule(IntervalTrigger(seconds=300))
-# async def cluster_notify():
-#     cluster = await get_url(f'{API}/clusters/{TRACK_CLUSTERID}', fmt='json')
