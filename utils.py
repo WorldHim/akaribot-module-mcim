@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 
 from core.builtins import Bot
-from core.utils.i18n import Locale
+from core.i18n import Locale
 
 def size_convert(value):
     '''格式转换
